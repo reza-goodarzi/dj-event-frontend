@@ -1,7 +1,9 @@
-export default function index() {
+import Layout from "../../components/Layout";
+
+export default function Events() {
   return (
-    <div>
+    <Layout>
       <h1>My Events</h1>
-    </div>
+    </Layout>
   );
 }
