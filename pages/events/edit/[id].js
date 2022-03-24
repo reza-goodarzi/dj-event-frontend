@@ -5,6 +5,7 @@ import Link from "next/link";
 import Layout from "../../../components/Layout";
 import { API_URL } from "../../../config";
 import styles from "../../../styles/Form.module.css";
+import Modal from "../../../components/Modal";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { FaImage } from "react-icons/fa";
@@ -23,6 +24,8 @@ function EditEventPage({ evt }) {
   const [imagePreview, setImagePreview] = useState(
     evt.image ? evt.image.formats.thumbnail.url : null
   );
+
+  const [showModal, setShowModal] = useState(false);
 
   const router = useRouter();
 
@@ -160,10 +163,14 @@ function EditEventPage({ evt }) {
       )}
 
       <div>
-        <button className="btn-secondary">
+        <button className="btn-secondary btn-icon" onClick={() => setShowModal(true)}>
           <FaImage /> Set Image
         </button>
       </div>
+
+      <Modal show={showModal} onClose={() => setShowModal(false)}>
+        Image Upload
+      </Modal>
     </Layout>
   );
 }
