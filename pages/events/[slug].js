@@ -8,6 +8,7 @@ import styles from "../../styles/Event.module.css";
 import { FaPencilAlt, FaTimes } from "react-icons/fa";
 
 function Event({ evt }) {
+  console.log(evt);
   const deleteEvent = (e) => {
     console.log("Delete");
   };
@@ -28,18 +29,15 @@ function Event({ evt }) {
         </div>
 
         <span>
-          {evt.date} at {evt.time}
+          {new Date(evt.date).toLocaleDateString("en-US")} at {evt.time}
         </span>
         <h1>{evt.name}</h1>
 
-        <div className={styles.image}>
-          <Image
-            src={evt.image ? evt.image : "/image/event-default.pn"}
-            width={960}
-            height={600}
-            alt={evt.name}
-          />
-        </div>
+        {evt.image && (
+          <div className={styles.image}>
+            <Image src={evt.image.formats.large.url} width={960} height={600} alt={evt.name} />
+          </div>
+        )}
 
         <h3>Performers:</h3>
         <p>{evt.performers}</p>
@@ -61,8 +59,8 @@ function Event({ evt }) {
 export default Event;
 
 export async function getStaticPaths() {
-  const res = await fetch(`${API_URL}/api/events`);
-  const events = await res.json();
+  const res = await fetch(`${API_URL}/events`);
+  const { data: events } = await res.json();
 
   const paths = events.map((evt) => ({
     params: { slug: evt.slug },
@@ -75,11 +73,11 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { slug } }) {
-  const res = await fetch(`${API_URL}/api/events/${slug}`);
-  const evt = await res.json();
+  const res = await fetch(`${API_URL}/events?filters[slug]=${slug}&populate=image`);
+  const { data: evt } = await res.json();
   return {
     props: {
-      evt,
+      evt: evt[0],
     },
     revalidate: 1,
   };
