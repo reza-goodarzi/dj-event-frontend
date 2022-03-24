@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { ToastContainer } from "react-toastify";
 import Footer from "./Footer";
 import Header from "./Header";
 import styles from "./Layout.module.css";
@@ -10,6 +11,8 @@ const Layout = ({ title, keywords, description, children }) => {
 
   return (
     <div>
+      <ToastContainer />
+
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
