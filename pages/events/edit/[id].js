@@ -9,6 +9,7 @@ import Modal from "../../../components/Modal";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { FaImage } from "react-icons/fa";
+import ImageUpload from "../../../components/ImageUpload";
 
 function EditEventPage({ evt }) {
   console.log(evt);
@@ -24,6 +25,8 @@ function EditEventPage({ evt }) {
   const [imagePreview, setImagePreview] = useState(
     evt.image ? evt.image.formats.thumbnail.url : null
   );
+
+  const [newImage, setNewImage] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -45,7 +48,7 @@ function EditEventPage({ evt }) {
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify({ data: values }),
+      body: JSON.stringify({ data: { ...values, image: newImage } }),
     });
 
     if (!res.ok) {
@@ -62,6 +65,12 @@ function EditEventPage({ evt }) {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setValues({ ...values, [name]: value });
+  };
+
+  const imageUploaded = async (image) => {
+    setImagePreview(image.formats.thumbnail.url);
+    setNewImage(image);
+    setShowModal(false);
   };
 
   return (
@@ -148,28 +157,30 @@ function EditEventPage({ evt }) {
               onChange={handleInputChange}
             />
           </div>
+
+          <div>
+            <h2>Event Image</h2>
+            {imagePreview ? (
+              <Image src={imagePreview} height={100} width={170} alt={evt.name} />
+            ) : (
+              <div>
+                <p>No image uploaded</p>
+              </div>
+            )}
+
+            <div>
+              <button className="btn-secondary btn-icon" onClick={() => setShowModal(true)}>
+                <FaImage /> Set Image
+              </button>
+            </div>
+          </div>
         </div>
 
         <input type="submit" value="Update Event" className="btn" />
       </form>
 
-      <h2>Event Image</h2>
-      {imagePreview ? (
-        <Image src={imagePreview} height={100} width={170} alt={evt.name} />
-      ) : (
-        <div>
-          <p>No image uploaded</p>
-        </div>
-      )}
-
-      <div>
-        <button className="btn-secondary btn-icon" onClick={() => setShowModal(true)}>
-          <FaImage /> Set Image
-        </button>
-      </div>
-
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        Image Upload
+        <ImageUpload evtID={evt.id} imageUploaded={imageUploaded} />
       </Modal>
     </Layout>
   );
