@@ -45,7 +45,12 @@ export function AuthProvider({ children }) {
 
   // Logout User
   const logout = async () => {
-    console.log("logout");
+    const res = await fetch(`${NEXT_URL}/logout`, { method: "POST" });
+
+    if (res.ok) {
+      setUser(null);
+      router.push("/");
+    }
   };
 
   // Check if user logged in
