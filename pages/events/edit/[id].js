@@ -12,7 +12,6 @@ import { FaImage } from "react-icons/fa";
 import ImageUpload from "../../../components/ImageUpload";
 
 function EditEventPage({ evt }) {
-  console.log(evt);
   const [values, setValues] = useState({
     name: evt.name,
     performers: evt.performers,
@@ -58,7 +57,6 @@ function EditEventPage({ evt }) {
 
     const { data } = await res.json();
     router.push(`/events/${data.slug}`);
-    console.log(data);
     toast.success("Event Updated");
   };
 
@@ -188,9 +186,11 @@ function EditEventPage({ evt }) {
 
 export default EditEventPage;
 
-export async function getServerSideProps({ params: { id } }) {
+export async function getServerSideProps({ params: { id }, req }) {
   const res = await fetch(`${API_URL}/events/${id}?populate=image`);
   const { data: evt } = await res.json();
+
+  console.log(req.headers.cookie);
 
   return {
     props: {
