@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { FaUser } from "react-icons/fa";
-import styles from "./AuthForm.module.css";
+import styles from "../../styles/AuthForm.module.css";
 import Layout from "../../components/Layout";
 import { AuthContext } from "../../context/AuthContext";
 
