@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Layout from "../../components/Layout";
 import { API_URL } from "../../config";
 import styles from "../../styles/Form.module.css";
 import { toast } from "react-toastify";
+import { parseCookies } from "../../helper";
+import { AuthContext } from "../../context/AuthContext";
 
-function AddEventPage() {
+function AddEventPage({ token }) {
+  const { user } = useContext(AuthContext);
   const [values, setValues] = useState({
     name: "",
     performers: "",
@@ -30,17 +33,25 @@ function AddEventPage() {
       return;
     }
 
+    values.user = user;
+
     const res = await fetch(`${API_URL}/events`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
+        authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ data: values }),
     });
 
     if (!res.ok) {
-      toast.error("Something Went Wrong");
-      return;
+      if (res.status === 403 || res.status === 401) {
+        toast.error("No Token included");
+        return;
+      } else {
+        toast.error("Something Went Wrong");
+        return;
+      }
     }
 
     const { data: evt } = await res.json();
@@ -146,3 +157,11 @@ function AddEventPage() {
 }
 
 export default AddEventPage;
+
+export async function getServerSideProps({ req }) {
+  const { token } = parseCookies(req);
+
+  return {
+    props: { token },
+  };
+}
