@@ -6,10 +6,8 @@ import { API_URL } from "../../config";
 import styles from "../../styles/Form.module.css";
 import { toast } from "react-toastify";
 import { parseCookies } from "../../helper";
-import { AuthContext } from "../../context/AuthContext";
 
 function AddEventPage({ token }) {
-  const { user } = useContext(AuthContext);
   const [values, setValues] = useState({
     name: "",
     performers: "",
@@ -32,8 +30,6 @@ function AddEventPage({ token }) {
       toast("Please fill all fields", { type: "error" });
       return;
     }
-
-    values.user = user;
 
     const res = await fetch(`${API_URL}/events`, {
       method: "POST",
